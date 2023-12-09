@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/png" href="https://edgestatic.azureedge.net/welcome/static/favicon.png">
+  <link rel="stylesheet" href="./converter.css">
+  <link rel="manifest" href="./manifest.json">
+  <title>Temperature converter</title>
+</head>
+
+<body>
+  <div class="container">
+    <h1>密码</h1>
+    <div>
+      <label>密码</label>
+      <input id="pass" type="text">
+    </div>
+    <div>
+      <label>用户名</label>
+      <input id="user" type="text">
+    </div>
+    <div>
+      <button id="butt" type="button">生成</button>
+    </div>  
+    <div>
+      <input id="sha256Code" type="text">
+      <button id="seleFile" type="button">选择文件</button>
+    </div> 
+  </div>
+
+
+  <script src="./main.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js', { scope: './' });
+    }
+  </script>
+  
+</body>
+
+</html>
