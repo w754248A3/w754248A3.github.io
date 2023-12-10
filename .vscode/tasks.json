@@ -1,0 +1,30 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "tsbuild",
+            "type": "shell",
+            "command": " tsc --build ts/src/main", // 你的构建命令
+            "group": "build",
+            
+            "presentation": {
+                "reveal": "always"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "tsbuildcopy",
+            "type": "shell",
+            "command": "npx copyfiles -f dist/main/main.js dist/service-worker/sw.js ../wwwroot/",
+            "dependsOn": "tsbuild",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+
+            "options": {
+                "cwd": "${workspaceFolder}/ts/" // 你的工作目录
+            }
+        }
+    ]
+}

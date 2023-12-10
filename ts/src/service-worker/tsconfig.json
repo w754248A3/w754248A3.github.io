@@ -1,0 +1,10 @@
+{
+    "extends": "../generic-tsconfig.json",
+    "compilerOptions": {
+        "lib": [
+            "esnext",
+            "webworker"
+        ],
+        "composite": true,
+    }
+}
