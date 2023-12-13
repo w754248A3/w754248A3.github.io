@@ -7,8 +7,12 @@ myself.addEventListener('install', event => {
         const cache = await caches.open(CACHE_NAME);
         cache.addAll([
             './',
+            './icon512.png',
             './main.js',
-            './converter.css'
+            './main.css',
+            './gen_password/gen_password.css',
+            './gen_password/gen_password.html',
+            './gen_password/gen_password.js',
         ]);
     })());
 });

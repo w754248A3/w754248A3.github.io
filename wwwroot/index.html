@@ -4,32 +4,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="stylesheet" href="./converter.css">
+  <link rel="stylesheet" href="./main.css">
   <link rel="manifest" href="./manifest.json">
+  <style>
+    .box {
+        width: 200px;
+        height: 200px;
+        margin: 10px;
+        border: 1px solid black;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    img {
+        max-width: 80%;
+        max-height: 50%;
+        object-fit: contain;
+    }
+    p, a {
+        font-size: 14px;
+        text-align: center;
+        width: 80%;
+    }
+</style>
   <title>工具</title>
 </head>
 
 <body>
   <div class="container">
-    <h1>密码</h1>
-    <div>
-      <label>密码</label>
-      <input id="pass" type="text">
+    <div class="box">
+        <img src="../icon512.png" alt="Image description">
+        <p>生成密码</p>
+        <a href="./gen_password/gen_password.html">点击这里</a>
     </div>
-    <div>
-      <label>用户名</label>
-      <input id="user" type="text">
+    <div class="box">
+        <img src="../icon512.png" alt="Image description">
+        <p>这是一些描述2。</p>
+        <a href="your-link.html">点击这里</a>
     </div>
-    <div>
-      <button id="butt" type="button">生成</button>
-    </div>  
-    <div>
-      <input id="sha256Code" type="text">
-      <button id="seleFile" type="button">打开选择器</button>
-    </div> 
-  </div>
-
-
+    <!-- 可以复制以上的 div.box 来添加更多的方块 -->
+</div>
   <script src="./main.js"></script>
   <script>
     if ('serviceWorker' in navigator) {

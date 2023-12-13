@@ -6,12 +6,4 @@
             "dom"
         ],
     },
-    "references": [
-        {
-            "path": "../service-worker"
-        },
-        {
-            "path": "../gen_password"
-        }
-    ]
 }

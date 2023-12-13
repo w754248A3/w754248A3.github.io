@@ -15,7 +15,12 @@
         {
             "label": "tsbuildcopy",
             "type": "shell",
-            "command": "npx copyfiles -f dist/main/main.js dist/service-worker/sw.js ../wwwroot/; npx copyfiles -f dist/gen_password/gen_password.js ../wwwroot/gen_password/",
+            "command":  [
+                "npx copyfiles -f dist/main/main.js dist/service-worker/sw.js ../wwwroot/;",
+                "npx copyfiles -f dist/gen_password/gen_password.js ../wwwroot/gen_password/",
+
+            ],
+            
             "dependsOn": "tsbuild",
             "group": {
                 "kind": "build",
