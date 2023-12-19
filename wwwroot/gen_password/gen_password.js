@@ -1,9 +1,9 @@
 "use strict";
 //加二行注释测试
-const pass = document.getElementById('pass');
-const butt = document.getElementById('butt');
+const pass = document.getElementById('password');
+const butt = document.getElementById('button');
 const seleFile = document.getElementById('seleFile');
-const user = document.getElementById('user');
+const user = document.getElementById('username');
 const sha256Code = document.getElementById('sha256Code');
 function createPass(len, isuserName) {
     function generatePassword(length, characters) {

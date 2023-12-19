@@ -1,9 +1,9 @@
 
 //加二行注释测试
-const pass = <HTMLInputElement>document.getElementById('pass');
-const butt = document.getElementById('butt');
+const pass = <HTMLInputElement>document.getElementById('password');
+const butt = document.getElementById('button');
 const seleFile = document.getElementById('seleFile');
-const user = <HTMLInputElement>document.getElementById('user');
+const user = <HTMLInputElement>document.getElementById('username');
 const sha256Code = <HTMLInputElement>document.getElementById('sha256Code');
 function createPass(len: number, isuserName: boolean) {
 
