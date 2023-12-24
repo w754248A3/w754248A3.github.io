@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>数字朗读</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        #number-input {
+            width: 200px;
+            height: 50px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="number-input" placeholder="请输入数字">
+    <script>
+        var input = document.getElementById('number-input');
+        input.addEventListener('input', function() {
+            
+            var number = input.value;
+
+            const array = number.split('');
+
+            const lastChar = array[array.length - 1];
+
+            var utterance = new SpeechSynthesisUtterance(lastChar);
+            utterance.lang = 'zh-CN';
+            utterance.rate =10;
+
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        });
+    </script>
+</body>
+</html>
