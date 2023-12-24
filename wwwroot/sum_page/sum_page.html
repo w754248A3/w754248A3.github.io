@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN" dir="ltr"></html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>计算和</title>
+    <style>
+        #list {
+            width: 100%;
+            height: 60vh;
+            border: 1px solid black;
+            overflow: auto;
+            margin-bottom: 20px;
+        }
+        #input, #sum, #delete {
+            width: 30%;
+            height: 30px;
+            margin: 10px;
+        }
+        #delete {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="list"></div>
+    <button id="delete">删除</button>
+    <input id="input" type="number" placeholder="输入数字并按回车">
+    <input id="sum" readonly>
+    <script>
+        let list = [];
+        let sum = 0;
+        const listDiv = document.getElementById('list');
+        const input = document.getElementById('input');
+        const sumInput = document.getElementById('sum');
+        const deleteButton = document.getElementById('delete');
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const value = parseInt(this.value);
+                if (!isNaN(value)) {
+                    list.push(value);
+                    sum += value;
+                    this.value = '';
+                    updateUI();
+                }
+            }
+        });
+
+        deleteButton.addEventListener('click', function() {
+            if (list.length > 0) {
+                sum -= list.pop();
+                updateUI();
+            }
+        });
+
+        function updateUI() {
+            listDiv.innerHTML = list.map((value, index) => `${index + 1}. ${value}`).join('<br>');
+            sumInput.value = sum;
+            deleteButton.disabled = list.length === 0;
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
