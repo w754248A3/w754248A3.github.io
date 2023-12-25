@@ -27,12 +27,12 @@
             padding: 10px;
             box-sizing: border-box;
         }
-        #input, #sum, #delete {
+        #input, #sum, #delete, #speak_button {
             width: 80%;
             height: 30px;
             margin: 10px;
         }
-        #delete {
+        #delete, #speak_button {
             cursor: pointer;
         }
     </style>
@@ -42,6 +42,7 @@
     <button id="delete">删除</button>
     <input id="sum" readonly>
     <input id="input" type="number" placeholder="输入数字并按回车">
+    <button id="speak_button">朗读</button> 
     <script>
         let list = [];
         let sum = 0;
@@ -49,6 +50,19 @@
         const input = document.getElementById('input');
         const sumInput = document.getElementById('sum');
         const deleteButton = document.getElementById('delete');
+        const spk = window.speechSynthesis;
+        const speak_button = document.getElementById('speak_button');
+
+        function f朗读字符(text, rete){
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-CN';
+            utterance.rate = rete || 10;
+
+            spk.cancel();
+            spk.speak(utterance);
+
+        }
 
         input.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
@@ -58,6 +72,8 @@
                     sum += value;
                     this.value = '';
                     updateUI();
+
+                    f朗读字符("+");
                 }
             }
         });
@@ -76,6 +92,32 @@
         }
 
         updateUI();
+
+        speak_button.addEventListener('click', function() {
+            if (list.length > 0) {
+                
+                const text = list.join("+,") + ",=," + sumInput.value;
+
+                f朗读字符(text, 0.5);
+
+            }
+        });
+        
+
+        (function () {
+
+
+            const spk = window.speechSynthesis;
+
+
+            input.addEventListener('keydown', function (e) {
+                const v = e.key;
+                if (/^[0-9]$/.test(v)) {
+                    f朗读字符(v);
+                }
+            });
+        })();
+
     </script>
 </body>
 </html>
