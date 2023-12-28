@@ -97,6 +97,11 @@
         }
 
         function getV(utterance) {
+
+            if(voiceSelect.selectedOptions.length === 0){
+                return;
+            }
+
             const selectedOption =
                 voiceSelect.selectedOptions[0].getAttribute("data-name");
             //console.log(selectedOption);
