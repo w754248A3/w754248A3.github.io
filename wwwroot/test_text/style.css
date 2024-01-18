@@ -1,0 +1,165 @@
+/* 定义一些通用的样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 定义容器的样式，使其居中并限制最大宽度 */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 定义每一行的样式，使其占据一定的高度比例，并使用flexbox布局 */
+.row {
+  display: flex;
+  align-items: center;
+}
+
+/* 定义第一行的高度比例为1 */
+.row:nth-child(1) {
+  height: calc(100vh / 14);
+}
+
+/* 定义第二行的高度比例为5 */
+.row:nth-child(2) {
+  height: calc(100vh / 14 * 5);
+}
+
+/* 定义第三行的高度比例为8 */
+.row:nth-child(3) {
+  height: calc(100vh / 14 * 8);
+}
+
+/* 定义按钮的样式，使其具有艺术风格，并根据不同的类名设置不同的颜色 */
+button {
+  width: 100px;
+  height: 50px;
+  border: none;
+  border-radius: 25px;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.load {
+  background: linear-gradient(to right, #48cae4, #90e0ef);
+}
+
+.save {
+  background: linear-gradient(to right, #f3722c, #f8961e);
+}
+
+.add {
+  background: linear-gradient(to right, #43aa8b, #90be6d);
+}
+
+/* 定义文本列表的样式，使其占据剩余的空间，并设置滚动条 */
+.text-list {
+  flex: 1;
+  overflow-y: auto;
+  list-style: none;
+  height: calc(100vh / 14 * 5);
+}
+
+
+.text-list li {
+  border: 2px solid #48cae4;
+  border-radius: 10px;
+  padding: 10px;
+  font-family: monospace;
+  line-height: 2.5;
+  font-weight: bold;
+}
+
+
+/* 定义文本编辑框的样式，使其占据剩余的空间，并设置边框和内边距 */
+.text-input {
+  flex: 1;
+  border: 2px solid #48cae4;
+  border-radius: 10px;
+  padding: 10px;
+  font-family: monospace;
+  line-height: 2.5;
+  font-weight: bold;
+  overflow-y: auto;
+  height: calc(100vh / 14 * 8);
+}
+
+/* 使用媒体查询来适应不同的屏幕尺寸 */
+@media (max-width: 768px) {
+
+  /* 当屏幕宽度小于或等于768px时，改变每一行的方向为垂直，并调整高度比例 */
+  .row {
+    flex-direction: column;
+  }
+
+  .row:nth-child(1) {
+    height: calc(100vh / 14 * 2);
+  }
+
+  .row:nth-child(2) {
+    height: calc(100vh / 14 * 6);
+  }
+
+  .row:nth-child(3) {
+    height: calc(100vh / 14 * 6);
+  }
+}
+
+
+
+/* 设置弹出窗口的样式 */
+.popup {
+  display: none;
+  /* 默认隐藏 */
+  position: fixed;
+  /* 固定位置 */
+  z-index: 10;
+  /* 在其他元素之上 */
+  width: 14.28%;
+  /* 宽度为视口宽度的7分之1 */
+  height: 20%;
+  /* 高度为视口高度的5分之1 */
+  background-color: black;
+  /* 背景色为黑色 */
+  color: white;
+  /* 字体颜色为白色 */
+  font-family: monospace;
+  /* 字体类型为等宽字体 */
+  overflow-y: scroll;
+  /* 允许垂直滚动 */
+}
+
+/* 设置文本列表的样式 */
+.list {
+  list-style-type: none;
+  /* 去掉列表项的标记 */
+  margin: 0;
+  /* 去掉外边距 */
+  padding: 0;
+  /* 去掉内边距 */
+}
+
+/* 设置列表项的样式 */
+.list li {
+  white-space: nowrap;
+  /* 不自动换行 */
+  padding: 10px;
+  /* 设置上下左右的间距 */
+}
+
+/* 设置鼠标悬停时的样式 */
+.list li:hover {
+  background-color: gray; /* 设置鼠标悬停时的背景颜色为灰色 */
+}
+
+
+
+/* 设置键盘选择时的样式 */
+.list li.selected {
+  background-color: gray; /* 设置键盘选择时的背景颜色为灰色 */
+}

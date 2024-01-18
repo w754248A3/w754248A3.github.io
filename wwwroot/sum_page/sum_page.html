@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -15,6 +16,7 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         #list {
             width: 80%;
             height: 50vh;
@@ -28,22 +30,30 @@
             padding: 10px;
             box-sizing: border-box;
         }
-        #input, #sum, #delete, #speak_button, #voiceSelect {
+
+        #input,
+        #sum,
+        #delete,
+        #speak_button,
+        #voiceSelect {
             width: 80%;
             height: 30px;
             margin: 10px;
         }
-        #delete, #speak_button {
+
+        #delete,
+        #speak_button {
             cursor: pointer;
         }
     </style>
 </head>
+
 <body>
     <div id="list"></div>
     <button id="delete">删除</button>
     <input id="sum" readonly>
     <input id="input" type="number" placeholder="输入数字并按回车">
-    <button id="speak_button">朗读</button> 
+    <button id="speak_button">朗读</button>
     <select id="voiceSelect"></select>
     <script>
         let list = [];
@@ -57,9 +67,9 @@
         const voiceSelect = document.getElementById('voiceSelect');
 
         let voices = [];
-
+        //const audioPlayer = new Audio(`data:audio/mp3;base64,${audioFiles[key]}`);
         function populateVoiceList() {
-            voices = spk.getVoices().filter(v=> v.lang==="zh-CN").sort(function (a, b) {
+            voices = spk.getVoices().filter(v => v.lang === "zh-CN").sort(function (a, b) {
                 const aname = a.name.toUpperCase();
                 const bname = b.name.toUpperCase();
 
@@ -72,7 +82,7 @@
                 }
             });
             //console.log(voices);
-            let selectedIndex =0;
+            let selectedIndex = 0;
             voiceSelect.innerHTML = "";
 
             for (let i = 0; i < voices.length; i++) {
@@ -81,7 +91,7 @@
 
                 if (voices[i].default) {
                     option.textContent += " -- DEFAULT";
-                    selectedIndex=i;
+                    selectedIndex = i;
                 }
 
                 option.setAttribute("data-lang", voices[i].lang);
@@ -98,7 +108,7 @@
 
         function getV(utterance) {
 
-            if(voiceSelect.selectedOptions.length === 0){
+            if (voiceSelect.selectedOptions.length === 0) {
                 return;
             }
 
@@ -112,7 +122,7 @@
             }
         }
 
-        function f朗读字符(text, rete){
+        function f朗读字符(text, rete) {
 
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'zh-CN';
@@ -123,7 +133,7 @@
 
         }
 
-        input.addEventListener('keydown', function(e) {
+        input.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') {
                 const value = parseInt(this.value);
                 if (!isNaN(value)) {
@@ -132,12 +142,12 @@
                     this.value = '';
                     updateUI();
 
-                    f朗读字符("加上");
+                    f朗读_2("加");
                 }
             }
         });
 
-        deleteButton.addEventListener('click', function() {
+        deleteButton.addEventListener('click', function () {
             if (list.length > 0) {
                 sum -= list.pop();
                 updateUI();
@@ -152,16 +162,16 @@
 
         updateUI();
 
-        speak_button.addEventListener('click', function() {
+        speak_button.addEventListener('click', function () {
             if (list.length > 0) {
-                
+
                 const text = list.join(",+,") + ",=," + sumInput.value;
 
                 f朗读字符(text, 0.5);
 
             }
         });
-        
+
 
         (function () {
 
@@ -172,11 +182,69 @@
             input.addEventListener('keydown', function (e) {
                 const v = e.key;
                 if (/^[0-9]$/.test(v)) {
-                    f朗读字符(v);
+                    f朗读_2(v);
                 }
             });
         })();
 
+
+        const f朗读_2 = create可以使用固定语音播放的方法();
+        function create可以使用固定语音播放的方法() {
+            let audio_map = new Map();
+            // 定义获取JSON文件的函数
+            function fetchJSON(jsonPath) {
+                // 使用fetch API发起请求
+                fetch(jsonPath)
+                    .then(response => {
+                        // 检查响应状态码，如果成功则返回响应体，否则抛出错误
+                        if (response.ok) {
+                            return response.json(); // 解析JSON数据
+                        } else {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                    })
+                    .then(data => {
+                        // 打印获取到的JSON数据到控制台
+                        console.log(data);
+
+                        f构造音频数据(data);
+                    })
+                    .catch(error => {
+                        // 打印错误信息到控制台
+                        console.log('Failed to fetch JSON:', error);
+                    });
+            }
+
+            function f构造音频数据(data) {
+
+                Object.keys(data).forEach((key) => {
+                    const audioPlayer = new Audio(`data:audio/mp3;base64,${data[key]}`);
+                    audio_map.set(key, audioPlayer);
+
+                });
+
+                console.log(audio_map);
+            }
+
+            // 调用函数获取data.json文件
+            fetchJSON('./fileData.json');
+
+            return (key) => {
+
+
+                if (audio_map.has(key)) {
+                    audio_map.get(key).play();
+                }
+                else {
+                    f朗读字符(key);
+                }
+
+            }
+        }
+
+
+
     </script>
 </body>
+
 </html>

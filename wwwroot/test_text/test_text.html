@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的web应用程序</title>
+  <!-- 引入CSS文件 -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <!-- 第一行，包含加载和保存按钮 -->
+    <div class="row">
+      <button class="load">加载</button>
+      <button class="save">保存</button>
+    </div>
+    <!-- 第二行，包含文本列表 -->
+    <div class="row">
+      <ul class="text-list">
+        <li>这是一个文本列表</li>
+        <li>你可以在这里添加或删除文本</li>
+        <li>你也可以点击文本来编辑它</li>
+      </ul>
+    </div>
+    <!-- 第三行，包含文本编辑框和添加按钮 -->
+    <div class="row">
+      <div class="text-input" contenteditable="true"></div>
+      <button class="add">添加</button>
+    </div>
+  </div>
+  <!-- 创建一个弹出窗口 -->
+  <div id="popup" class="popup">
+    <!-- 创建一个文本列表 -->
+    <ul id="list" class="list">
+    </ul>
+  </div>
+  <!-- 引入JavaScript文件 -->
+  <script src="script.js"></script>
+</body>
+
+</html>
