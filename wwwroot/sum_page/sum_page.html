@@ -66,71 +66,54 @@
         const speak_button = document.getElementById('speak_button');
         const voiceSelect = document.getElementById('voiceSelect');
 
-        let voices = [];
+        const v使用合成语音="使用合成语音";
+        const v使用预置语音 ="使用预置语音";
+
         //const audioPlayer = new Audio(`data:audio/mp3;base64,${audioFiles[key]}`);
-        function populateVoiceList() {
-            voices = spk.getVoices().filter(v => v.lang === "zh-CN").sort(function (a, b) {
-                const aname = a.name.toUpperCase();
-                const bname = b.name.toUpperCase();
-
-                if (aname < bname) {
-                    return -1;
-                } else if (aname == bname) {
-                    return 0;
-                } else {
-                    return +1;
-                }
-            });
-            //console.log(voices);
+        function populateVoiceList(text) {
+           
+       
             let selectedIndex = 0;
-            voiceSelect.innerHTML = "";
+           
+            const option = document.createElement("option");
+            option.textContent = text;
 
-            for (let i = 0; i < voices.length; i++) {
-                const option = document.createElement("option");
-                option.textContent = `${voices[i].name} (${voices[i].lang})`;
-
-                if (voices[i].default) {
-                    option.textContent += " -- DEFAULT";
-                    selectedIndex = i;
-                }
-
-                option.setAttribute("data-lang", voices[i].lang);
-                option.setAttribute("data-name", voices[i].name);
-                voiceSelect.appendChild(option);
-            }
+            voiceSelect.appendChild(option);
             voiceSelect.selectedIndex = selectedIndex;
         }
 
-        populateVoiceList();
-        if (spk.onvoiceschanged !== undefined) {
-            spk.onvoiceschanged = populateVoiceList;
+        populateVoiceList(v使用合成语音);
+        
+
+        function is使用合成语音() {
+
+           
+            const text =
+                voiceSelect.selectedOptions[0].textContent;
+
+      
+            return text === v使用合成语音;
         }
 
-        function getV(utterance) {
-
-            if (voiceSelect.selectedOptions.length === 0) {
-                return;
-            }
-
-            const selectedOption =
-                voiceSelect.selectedOptions[0].getAttribute("data-name");
-            //console.log(selectedOption);
-            for (let i = 0; i < voices.length; i++) {
-                if (voices[i].name === selectedOption) {
-                    utterance.voice = voices[i];
-                }
-            }
-        }
-
-        function f朗读字符(text, rete) {
+        function f朗读_使用合成语音(text, rete) {
 
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'zh-CN';
             utterance.rate = rete || 10;
-            getV(utterance);
+           
             spk.cancel();
             spk.speak(utterance);
 
+        }
+
+        function f朗读字符(text){
+
+            if(is使用合成语音()){
+                f朗读_使用合成语音(text);
+            }
+            else{
+                f朗读_使用预置语音(text);
+            }
         }
 
         input.addEventListener('keydown', function (e) {
@@ -142,7 +125,7 @@
                     this.value = '';
                     updateUI();
 
-                    f朗读_2("加");
+                    f朗读字符("加");
                 }
             }
         });
@@ -167,7 +150,7 @@
 
                 const text = list.join(",+,") + ",=," + sumInput.value;
 
-                f朗读字符(text, 0.5);
+                f朗读_使用合成语音(text, 0.5);
 
             }
         });
@@ -182,13 +165,13 @@
             input.addEventListener('keydown', function (e) {
                 const v = e.key;
                 if (/^[0-9]$/.test(v)) {
-                    f朗读_2(v);
+                    f朗读字符(v);
                 }
             });
         })();
 
 
-        const f朗读_2 = create可以使用固定语音播放的方法();
+        const f朗读_使用预置语音 = create可以使用固定语音播放的方法();
         function create可以使用固定语音播放的方法() {
             let audio_map = new Map();
             // 定义获取JSON文件的函数
@@ -222,7 +205,7 @@
                     audio_map.set(key, audioPlayer);
 
                 });
-
+                populateVoiceList(v使用预置语音);
                 console.log(audio_map);
             }
 
@@ -234,9 +217,6 @@
 
                 if (audio_map.has(key)) {
                     audio_map.get(key).play();
-                }
-                else {
-                    f朗读字符(key);
                 }
 
             }
