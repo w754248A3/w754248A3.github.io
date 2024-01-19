@@ -66,15 +66,15 @@
         const speak_button = document.getElementById('speak_button');
         const voiceSelect = document.getElementById('voiceSelect');
 
-        const v使用合成语音="使用合成语音";
-        const v使用预置语音 ="使用预置语音";
+        const v使用合成语音 = "使用合成语音";
+        const v使用预置语音 = "使用预置语音";
 
         //const audioPlayer = new Audio(`data:audio/mp3;base64,${audioFiles[key]}`);
         function populateVoiceList(text) {
-           
-       
+
+
             let selectedIndex = 0;
-           
+
             const option = document.createElement("option");
             option.textContent = text;
 
@@ -83,15 +83,15 @@
         }
 
         populateVoiceList(v使用合成语音);
-        
+
 
         function is使用合成语音() {
 
-           
+
             const text =
                 voiceSelect.selectedOptions[0].textContent;
 
-      
+
             return text === v使用合成语音;
         }
 
@@ -100,18 +100,18 @@
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'zh-CN';
             utterance.rate = rete || 10;
-           
+
             spk.cancel();
             spk.speak(utterance);
 
         }
 
-        function f朗读字符(text){
+        function f朗读字符(text) {
 
-            if(is使用合成语音()){
+            if (is使用合成语音()) {
                 f朗读_使用合成语音(text);
             }
-            else{
+            else {
                 f朗读_使用预置语音(text);
             }
         }
@@ -173,7 +173,7 @@
 
         const f朗读_使用预置语音 = create可以使用固定语音播放的方法();
         function create可以使用固定语音播放的方法() {
-            let audio_map = new Map();
+            let func = null;
             // 定义获取JSON文件的函数
             function fetchJSON(jsonPath) {
                 // 使用fetch API发起请求
@@ -199,14 +199,10 @@
             }
 
             function f构造音频数据(data) {
-
-                Object.keys(data).forEach((key) => {
-                    const audioPlayer = new Audio(`data:audio/mp3;base64,${data[key]}`);
-                    audio_map.set(key, audioPlayer);
-
-                });
+                //const audioPlayer = new Audio(`data:audio/mp3;base64,${data[key]}`);
+                func = create使用音频上下文播放音频的函数(data);
                 populateVoiceList(v使用预置语音);
-                console.log(audio_map);
+
             }
 
             // 调用函数获取data.json文件
@@ -215,14 +211,80 @@
             return (key) => {
 
 
-                if (audio_map.has(key)) {
-                    audio_map.get(key).play();
+                if (func) {
+                    func(key);
                 }
 
             }
         }
 
+        function create使用音频上下文播放音频的函数(data) {
+            const map = new Map();
 
+            // 创建一个新的音频上下文
+            let audioContext = null;
+
+            // 将Base64字符串转换为ArrayBuffer
+            function base64ToArrayBuffer(base64) {
+                const binaryString = window.atob(base64);
+                const length = binaryString.length;
+                const bytes = new Uint8Array(length);
+                for (let i = 0; i < length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                return bytes.buffer;
+            }
+
+            // 解码ArrayBuffer为AudioBuffer
+            function decodeArrayBuffer(arrayBuffer) {
+                return audioContext.decodeAudioData(arrayBuffer);
+            }
+
+            // 播放音频
+            function playAudio(audioBuffer) {
+                // 创建一个音频源
+                const source = audioContext.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(audioContext.destination);
+
+
+                source.start();
+            }
+
+
+            return (text) => {
+
+
+                if (audioContext === null) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                }
+
+
+
+
+
+
+                if (map.has(text)) {
+                    playAudio(map.get(text));
+                }
+                else {
+                    const arrayBuffer = base64ToArrayBuffer(data[text]);
+
+                    decodeArrayBuffer(arrayBuffer).then(audioBuffer => {
+                        playAudio(audioBuffer)
+                        if (!map.has(text)) {
+                            map.set(text, audioBuffer);
+                        }
+
+
+
+                    }).catch(error => {
+                        console.error('音频解码失败:', error);
+                    });
+                }
+            }
+        }
 
     </script>
 </body>
