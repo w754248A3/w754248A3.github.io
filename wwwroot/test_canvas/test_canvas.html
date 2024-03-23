@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+
+<body>
+    <canvas id="canvas">
+
+    </canvas>
+    <script>
+        // 获取canvas元素并设置其宽高和背景色
+        var canvas = document.getElementById('canvas'); // 获取id为"canvas"的canvas元素
+        canvas.width = 200; // 设置canvas的宽度为200像素
+        canvas.height = 200; // 设置canvas的高度为200像素
+        canvas.style.backgroundColor = 'black'; // 设置canvas的背景色为黑色
+
+        // 获取canvas的2D渲染上下文
+        var ctx = canvas.getContext('2d'); // 获取canvas的2D渲染上下文，用于绘制图形
+
+        // 设置线段的颜色
+        ctx.strokeStyle = 'red'; // 设置线段的颜色为红色
+        ctx.fillStyle = 'red'; // 设置填充色为红色，用于绘制文字
+
+        const v绘制线段= ()=>{
+ // 绘制线段和索引号
+ for (var i = 0; i <= 400; i += 10) { // 从0到400，每隔10像素
+            ctx.beginPath(); // 开始新的路径
+            ctx.moveTo(i, 100); // 移动到线段的起点
+            ctx.lineTo(i, 120); // 绘制到线段的终点
+            ctx.stroke(); // 描绘线段
+
+            ctx.fillText(i / 10, i, 90); // 在旁边绘制索引号
+        }
+
+        };
+
+        v绘制线段();
+       
+        // 添加鼠标事件监听器以实现拖动功能
+        var isDragging = false; // 是否正在拖动的标志
+        var startX = 0; // 鼠标按下时的x坐标
+        var scrollX = 0; // 水平滚动的距离
+
+        canvas.addEventListener('mousedown', function (e) { // 当鼠标按下时
+            isDragging = true; // 设置正在拖动的标志为true
+            startX = e.clientX; // 记录鼠标按下时的x坐标
+        });
+
+
+        const v重绘 = ()=>{
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // 清除canvas
+                ctx.save(); // 保存当前的绘图状态
+                ctx.translate(scrollX, 0); // 平移坐标系
+
+                // 重新绘制线段和索引号
+                v绘制线段();
+
+                ctx.restore(); // 恢复之前保存的绘图状态
+        };
+        canvas.addEventListener('mousemove', function (e) { // 当鼠标移动时
+            if (isDragging) { // 如果正在拖动
+                scrollX += e.clientX - startX; // 更新水平滚动的距离
+                startX = e.clientX; // 更新鼠标的x坐标
+
+                v重绘();
+            }
+        });
+
+        canvas.addEventListener('mouseup', function () { // 当鼠标松开时
+            isDragging = false; // 设置正在拖动的标志为false
+        });
+
+        
+        let v_scale = 0;
+        canvas.addEventListener('wheel', function (event) {
+            if (event.deltaY < 0) {
+
+                v_scale+=2;
+                ctx.scale(2,2);
+
+                v重绘();
+            } else {
+                v_scale = v_scale !==0 ? v_scale-2:0;
+                ctx.scale(0.5,0.5);
+                v重绘();
+            }
+        });
+
+        
+    </script>
+</body>
+
+</html>

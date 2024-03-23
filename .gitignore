@@ -2,3 +2,5 @@
 *.tsbuildinfo
 *.js.map
 *.d.ts
+ts/node_modules/
+ts/dist/
