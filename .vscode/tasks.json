@@ -4,13 +4,17 @@
         {
             "label": "tsbuild",
             "type": "shell",
-            "command": " tsc --build ts/src/main", // 你的构建命令
+            "command": "npx tsc --build src/main", // 你的构建命令
             "group": "build",
             
             "presentation": {
                 "reveal": "always"
             },
-            "problemMatcher": []
+            "problemMatcher": [],
+
+            "options": {
+                "cwd": "${workspaceFolder}/ts/" // 你的工作目录
+            }
         },
         {
             "label": "tsbuildcopy",

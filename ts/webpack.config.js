@@ -4,21 +4,9 @@ const path = require('path');
 module.exports = {
   
   entry: {
-    ["sw.js"]: '/src/service-worker/sw.ts',
-    ["main.js"]: './src/main/main.ts',
+    ["sw.js"]: './dist/service-worker/sw.js',
+    ["screen_recording/screen_recording.js"]: './dist/screen_recording/screen_recording.js',
     // 可以根据需要添加更多入口
-  },
-  module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/,
-      },
-    ],
-  },
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
     filename: '[name]',

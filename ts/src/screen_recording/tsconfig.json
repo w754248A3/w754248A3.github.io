@@ -6,9 +6,4 @@
             "dom"
         ],
     },
-    "references": [
-        {
-            "path": "../gen_password"
-        }
-    ]
 }
