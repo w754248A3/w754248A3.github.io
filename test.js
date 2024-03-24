@@ -1,4 +1,3 @@
-// webpack.config.js
 const fs = require('fs');
 const path = require('path');
 
@@ -68,16 +67,4 @@ function getEntryObject(obj, directory, subpath) {
 
 }
 
-let obj = {};
-obj = getEntryObject(obj, path.join(__dirname, "dist"), "./dist");
-
-
-
-module.exports = {
-  
-  entry: obj,
-  output: {
-    filename: '[name]',
-    path: path.resolve(__dirname, '../wwwroot/')
-  },
-};
+console.log(getEntryObject({}, "ts/dist", "./dist"));

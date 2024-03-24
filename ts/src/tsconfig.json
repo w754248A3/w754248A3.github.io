@@ -1,14 +1,10 @@
 {
     "extends": "../generic-tsconfig.json",
     "compilerOptions": {
+        "outDir": "../dist",
         "lib": [
             "esnext",
             "dom"
         ],
     },
-    "references": [
-        {
-            "path": "../gen_password"
-        }
-    ]
 }
