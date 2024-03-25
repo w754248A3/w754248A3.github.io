@@ -4,7 +4,7 @@
         {
             "label": "tsbuild",
             "type": "shell",
-            "command": "npx tsc --build src/main", // 你的构建命令
+            "command": "npx tsc --build src/sw", // 你的构建命令
             "group": "build",
             
             "presentation": {
@@ -17,15 +17,16 @@
             }
         },
         {
-            "label": "tsbuildcopy",
+            "label": "tsbuild_sw",
             "type": "shell",
             "command":  [
-                "npx copyfiles -f dist/main/main.js dist/service-worker/sw.js ../wwwroot/;",
-                "npx copyfiles -f dist/gen_password/gen_password.js ../wwwroot/gen_password/",
+                "npx tsc --build sw;",
+                "npx copyfiles -f dist/sw/sw.js ../wwwroot/;",
+                //"npx copyfiles -f dist/gen_password/gen_password.js ../wwwroot/gen_password/",
 
             ],
             
-            "dependsOn": "tsbuild",
+     
             "group": {
                 "kind": "build",
                 "isDefault": false
@@ -40,6 +41,7 @@
             "label": "webpack",
             "type": "shell",
             "command":  [
+                "npx tsc --build src;",
                 "npx webpack --mode production;",
 
             ],

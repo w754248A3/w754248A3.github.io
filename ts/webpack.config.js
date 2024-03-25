@@ -69,13 +69,20 @@ function getEntryObject(obj, directory, subpath) {
 }
 
 let obj = {};
-obj = getEntryObject(obj, path.join(__dirname, "dist"), "./dist");
+obj = getEntryObject(obj, path.join(__dirname, "dist", "src"), "dist/src");
+const v = obj["main/main.js"];
 
+delete obj["main/main.js"];
 
+obj["main.js"]=v;
+console.log(obj);
 
 module.exports = {
   
   entry: obj,
+
+
+
   output: {
     filename: '[name]',
     path: path.resolve(__dirname, '../wwwroot/')
