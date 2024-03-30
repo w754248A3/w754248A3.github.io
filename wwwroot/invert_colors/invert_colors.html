@@ -1,52 +1,40 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>反色</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: #f0f0f0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>反色</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+  }
 
-    #videoPlayer {
-      width: 90%;
-      max-width: 600px;
-      margin-bottom: 20px;
-    }
+  video {
+    width: 80%;
+    max-width: 600px;
+    margin-bottom: 20px;
+  }
 
-    #canvas {
-      width: 90%;
-      max-width: 600px;
-      margin-bottom: 20px;
-    }
-
-    button {
-      padding: 10px 20px;
-      margin: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
+  button {
+    padding: 10px 20px;
+    font-size: 18px;
+  }
+</style>
 </head>
-
 <body>
-  <video id="videoPlayer" autoplay muted></video>
-  <canvas id="canvas"></canvas>
-<button id="startRecording">开始录制</button>
-<button id="stopRecording" disabled>结束录制</button>
 
+<video id="video_1" controls></video>
 
-  <script src="invert_colors.js"></script>
+<video id="video_2" controls></video>
+
+<button id="startRecording">播放/暂停所有视频</button>
+
+<script src="invert_colors.js"></script>
 </body>
-
 </html>

@@ -88,7 +88,8 @@ module.exports = {
   
     entry: {
         //["gen_password/gen_password.js"]: "./src/gen_password/gen_password.ts",
-        ["screen_recording/screen_recording.js"]: "./src/screen_recording/screen_recording.ts",
+        //["screen_recording/screen_recording.js"]: "./src/screen_recording/screen_recording.ts",
+        ["invert_colors/invert_colors.js"]: "./src/invert_colors/invert_colors.ts",
     },
   
     module: {
