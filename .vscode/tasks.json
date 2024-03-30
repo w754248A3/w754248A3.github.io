@@ -54,6 +54,25 @@
             "options": {
                 "cwd": "${workspaceFolder}/ts/" // 你的工作目录
             }
+        },
+
+
+        {
+            "label": "webpack_ts",
+            "type": "shell",
+            "command":  [
+                "npx webpack --mode production;",
+
+            ],
+        
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+
+            "options": {
+                "cwd": "${workspaceFolder}/ts/" // 你的工作目录
+            }
         }
     ]
 }

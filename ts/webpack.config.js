@@ -77,14 +77,56 @@ delete obj["main/main.js"];
 obj["main.js"]=v;
 console.log(obj);
 
+
+const TYPE_SCRIPT = true;
+
+
+if(TYPE_SCRIPT){
+    
+
 module.exports = {
   
-  entry: obj,
+    entry: {
+        ["gen_password/gen_password.js"]: "./src/gen_password/gen_password.ts",
+    },
+  
+    module: {
+        rules: [
+          {
+            test: /\.tsx?$/,
+            use: 'ts-loader',
+            exclude: /node_modules/,
+          },
+        ],
+      },
+      resolve: {
+        extensions: ['.tsx', '.ts', '.js'],
+      },
+  
+    output: {
+      filename: '[name]',
+      path: path.resolve(__dirname, '../wwwroot/')
+    },
+  };
+  
+}
+else{
+
+    
 
 
+module.exports = {
+  
+    entry: obj,
+  
+  
+  
+    output: {
+      filename: '[name]',
+      path: path.resolve(__dirname, '../wwwroot/')
+    },
+  };
+  
+}
 
-  output: {
-    filename: '[name]',
-    path: path.resolve(__dirname, '../wwwroot/')
-  },
-};
+

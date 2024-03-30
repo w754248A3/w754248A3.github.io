@@ -14,22 +14,68 @@ function createPass(len: number, isuserName: boolean) {
 
     }
 
+    function F检测生成的字符串中是否包含字符(v待检测字符串数组:string[], v被检测字符串:string){
+     
+        const v被检测字符数组 = [...v被检测字符串];
+        const res = v待检测字符串数组.map(v待检测字符串=>{
+            let n = 0;
+
+            [...v待检测字符串].forEach(v待检测字符 =>{
+
+                for (const iterator of v被检测字符数组) {
+                    if(v待检测字符 === iterator){
+                        n+=1;
+                        return;
+                    }
+                }
+
+            });
+
+            return n;
+        }).filter(v=> v>= 2).length === v待检测字符串数组.length;
+
+        return res;
+
+    }
+
     const specials = '!@#$%^&*()_+{}:"<>?\|[];\',./`~';
     const lowercase = 'abcdefghijklmnopqrstuvwxyz';
     const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const numbers = '0123456789';
 
+    let vs:string[]
     if (isuserName) {
-        const sum = lowercase + uppercase + numbers;
+        vs = [lowercase,uppercase,numbers];
 
-        return generatePassword(len, sum);
+
+        
     }
     else {
-        const sum = specials + lowercase + uppercase + numbers;
+        vs = [specials,lowercase,uppercase,numbers];
 
-        return generatePassword(len, sum);
+
+
     }
 
+    const sum = vs.join("");
+    let n = 0;
+    while(true){
+
+        const v = generatePassword(len, sum);
+
+        if(F检测生成的字符串中是否包含字符(vs, v)){
+            console.log(n);
+            return v;
+        }
+        else{
+            n+=1;
+
+            if(n > 1000){
+                throw new Error("生成失败");
+            }
+        }
+    
+    }
 
 }
 

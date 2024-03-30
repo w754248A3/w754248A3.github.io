@@ -4,3 +4,4 @@
 *.d.ts
 ts/node_modules/
 ts/dist/
+cert
