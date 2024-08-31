@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>数字输入框示例</title>
+<script>
+// 当文档加载完毕时绑定事件处理函数
+document.addEventListener('DOMContentLoaded', function() {
+    var inputElement = document.getElementById('numberInput');
+    var displayElement = document.getElementById('display');
+
+    // 绑定事件处理函数到输入框的keydown事件
+    inputElement.addEventListener('keydown', function(event) {
+        displayElement.textContent = '键值: ' + event.key + " 键码: " + event.code;
+       
+    });
+});
+</script>
+</head>
+<body>
+    <p id="display">键值: </p>
+    <input type="text" id="numberInput" placeholder="只能输入数字">
+</body>
+</html>

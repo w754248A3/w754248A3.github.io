@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片浏览器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: auto;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        button {
+            margin: 0 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #mydiv {
+            max-width: auto;
+            max-height: 80%;
+            margin-bottom: 10px;
+        }
+
+        #displayImage {
+            max-width: auto;
+            max-height: 80%;
+            margin-bottom: 10px;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: yellow;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button id="selectFolder">选择文件夹</button>
+        <button id="prevImage" disabled>上一张</button>
+        <button id="nextImage" disabled>下一张</button>
+        <button id="saveImage" disabled>保存图片</button>
+    </div>
+    <div id="mydiv">
+        <img id="displayImage" src="#" alt="图片预览" hidden>
+
+        <div id="toast" class="toast" hidden>消息提示</div>
+    </div>
+    
+
+    <script>
+
+const selectFolderButton = document.getElementById('selectFolder');
+        const prevImageButton = document.getElementById('prevImage');
+        const nextImageButton = document.getElementById('nextImage');
+        const saveImageButton = document.getElementById('saveImage');
+        const displayImageElement = document.getElementById('displayImage');
+
+        let directoryHandle, saveDirectoryHandle;
+        let imageFiles = [];
+        let currentImageIndex = 0;
+
+        async function selectDirectory() {
+            try {
+                directoryHandle = await window.showDirectoryPicker();
+                imageFiles = await getImagesInDirectory(directoryHandle);
+                if (imageFiles.length > 0) {
+                    displayImage(0);
+                    enableButtons();
+                    displayImageElement.parentElement.requestFullscreen();
+                }
+            } catch (error) {
+                showToast('选择文件夹时出错: ' + error.message);
+            }
+        }
+
+        async function getImagesInDirectory(directoryHandle) {
+            let files = await directoryHandle.entries();
+            let imageFiles = [];
+            for await (let [name, entry] of files) {
+                if (entry.kind === 'file' && /\.(jpg|jpeg|png)$/.test(name)) {
+                    imageFiles.push(entry);
+                }
+            }
+            return imageFiles;
+        }
+
+        async function displayImage(index) {
+            currentImageIndex = index;
+            displayImageElement.src = URL.createObjectURL(await imageFiles[currentImageIndex].getFile());
+            displayImageElement.hidden = false;
+            updateButtonStates();
+        }
+
+        function updateButtonStates() {
+            prevImageButton.disabled = currentImageIndex === 0;
+            nextImageButton.disabled = currentImageIndex === imageFiles.length - 1;
+            saveImageButton.disabled = false;
+        }
+
+        async function prevImage() {
+            if (currentImageIndex > 0) {
+                await displayImage(currentImageIndex - 1);
+            }
+        }
+
+        async function nextImage() {
+            if (currentImageIndex < imageFiles.length - 1) {
+                await displayImage(currentImageIndex + 1);
+            }
+        }
+
+        async function saveImage() {
+            if (!directoryHandle) {
+                showToast('请先选择一个文件夹');
+                return;
+            }
+            if (!saveDirectoryHandle) {
+                saveDirectoryHandle = await window.showDirectoryPicker();
+            }
+            try {
+                let fileHandle = await saveDirectoryHandle.getFileHandle(imageFiles[currentImageIndex].name, { create: true });
+                let writable = await fileHandle.createWritable();
+                await writable.write(await imageFiles[currentImageIndex].getFile());
+                await writable.close();
+                showToast('图片保存成功');
+            } catch (error) {
+                showToast('保存图片时出错: ' + error.message);
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.hidden = false;
+            setTimeout(() => { toast.hidden = true; }, 2000);
+        }
+
+        function enableButtons() {
+            prevImageButton.disabled = false;
+            nextImageButton.disabled = imageFiles.length === 1;
+            saveImageButton.disabled = false;
+        }
+
+        // Event listeners
+        selectFolderButton.addEventListener('click', selectDirectory);
+        prevImageButton.addEventListener('click', prevImage);
+        nextImageButton.addEventListener('click', nextImage);
+        saveImageButton.addEventListener('click', saveImage);
+
+        document.addEventListener("keydown", e=>{
+
+            if(e.key === "d"){
+                nextImage();
+                showToast('图片保存成功');
+            }
+        });
+
+        // Initialize
+        updateButtonStates();
+    </script>
+</body>
+</html>
