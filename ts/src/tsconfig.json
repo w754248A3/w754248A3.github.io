@@ -6,5 +6,8 @@
             "esnext",
             "dom"
         ],
+        "types": [
+            "@types/wicg-file-system-access"
+        ]
     },
 }
