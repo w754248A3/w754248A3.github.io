@@ -74,7 +74,7 @@
                 playVideo(msg.virtualUrl);
             }
             else if(msg.type === 'LOG_MESSAGE') {
-                log(`收到 ERROR 消息，错误信息: ${msg.error}`);
+                log(`收到 ERROR 消息，错误信息: ${msg}`);
             }
         };
 
@@ -130,7 +130,7 @@
             videoPlayer.src = virtualUrl;
             videoPlayer.play().catch(e => log('自动播放被阻止，请点击播放按钮'));
             videoPlayer.onerror = (e) => {
-                log(`播放错误: ${e.message}`);
+                log(`播放错误: ${e}`);
             };
         }
 
