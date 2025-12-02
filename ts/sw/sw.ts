@@ -44,15 +44,14 @@ const log = (mes:string) => {
 };
 
 myself.addEventListener('fetch', event => {
-    log(`Fetch intercepted for ${event.request.url}`);
-
+    
     console.log("Fetch intercepted for:", event.request.url);
     if (currentFileData && currentFileData.virtualUrl && event.request.url.endsWith(currentFileData.virtualUrl)) {
 
         console.log("Intercept video request:", event.request.url);
 
         const p = handleVideoRequest(event.request, currentFileData.file);
-        p.catch(err => {log(`Error handling video request: ${err}`);});
+        p.catch(err => {log(`Error handling video request: ${JSON.stringify(err)}`);});
         event.respondWith(p);
     
     }
