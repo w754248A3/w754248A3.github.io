@@ -55,6 +55,8 @@
         <h2>▶️ 播放加密文件</h2>
         <p>选择按位取反的混淆文件，浏览器将边解密边播放。</p>
         <input type="file" id="playInput">
+        <span>-------------------------</span>
+        <input type="button" value="File API 选取" id="fileAPIInput">
         <video id="videoPlayer" controls playsinline></video>
     </div>
 
@@ -111,7 +113,7 @@
         // --- 2. 播放逻辑 ---
         const playInput = document.getElementById('playInput');
         const videoPlayer = document.getElementById('videoPlayer');
-
+        const fileAPIInput = document.getElementById('fileAPIInput');
         playInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -122,6 +124,28 @@
             channel.postMessage( getVedioFileData(file));
 
 
+        });
+
+
+        fileAPIInput.addEventListener('click', async () => {
+            try {
+                const [fileHandle] = await window.showOpenFilePicker({
+                    types: [{ description: 'All Files', accept: { '*/*': [] } }],
+                    multiple: false
+                });
+                if (!fileHandle) {
+                    log('未选择任何文件');
+                    return;
+                }
+                const file = await fileHandle.getFile();
+                log(`已选择播放文件: ${file.name}`);
+
+               
+                channel.postMessage( getVedioFileData(file));
+
+            } catch (error) {
+                log(`文件选择出错: ${error.message}`);
+            }
         });
 
         function playVideo(virtualUrl) {
