@@ -73,8 +73,16 @@
                 log(`收到 READY_TO_PLAY 消息，开始播放视频`);
                 playVideo(msg.virtualUrl);
             }
+            else if(msg.type === 'LOG_MESSAGE') {
+                log(`收到 ERROR 消息，错误信息: ${msg.error}`);
+            }
         };
 
+
+        window.error = (message, source, lineno, colno, error)=> {
+            log(`捕获到全局错误: ${message} at ${source}:${lineno}:${colno}`);
+            
+        };
         const getIncrementingID = (() => {
             const array = new Uint32Array(10);
             window.crypto.getRandomValues(array);
@@ -121,6 +129,9 @@
 
             videoPlayer.src = virtualUrl;
             videoPlayer.play().catch(e => log('自动播放被阻止，请点击播放按钮'));
+            videoPlayer.onerror = (e) => {
+                log(`播放错误: ${e.message}`);
+            };
         }
 
       

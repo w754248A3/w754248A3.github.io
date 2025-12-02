@@ -36,13 +36,25 @@ channel.onmessage = (event) => {
     }
 };
 
+const log = (mes:string) => {
+    channel.postMessage({
+        type: "LOG_MESSAGE",
+        message: mes
+    });
+};
 
 myself.addEventListener('fetch', event => {
+    log(`Fetch intercepted for ${event.request.url}`);
+
     console.log("Fetch intercepted for:", event.request.url);
     if (currentFileData && currentFileData.virtualUrl && event.request.url.endsWith(currentFileData.virtualUrl)) {
 
         console.log("Intercept video request:", event.request.url);
-        event.respondWith(handleVideoRequest(event.request, currentFileData.file));
+
+        const p = handleVideoRequest(event.request, currentFileData.file);
+        p.catch(err => {log(`Error handling video request: ${err}`);});
+        event.respondWith(p);
+    
     }
     else {
 
