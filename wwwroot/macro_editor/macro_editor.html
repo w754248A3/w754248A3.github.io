@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宏配置编辑器 (Macro Config Editor)</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --primary: #007bff;
+            --danger: #dc3545;
+            --success: #28a745;
+            --border: #ddd;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            padding-bottom: 80px; /* 为回到顶部按钮留出空间 */
+        }
+
+        /* 顶部工具栏 */
+        .toolbar {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: #0056b3; }
+        .btn-success { background-color: var(--success); color: white; }
+        .btn-success:hover { background-color: #1e7e34; }
+        .btn-danger { background-color: var(--danger); color: white; }
+        .btn-danger:hover { background-color: #bd2130; }
+        .btn-sm { padding: 4px 8px; font-size: 0.85em; }
+
+        /* 主布局 */
+        .container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .column {
+            flex: 1;
+            min-width: 450px; /* 稍微加宽最小宽度 */
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        h2 { border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-top: 0; }
+        h3, h4 { margin: 10px 0; }
+
+        /* 规则卡片 */
+        .rule-card {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 15px;
+            background-color: #fff;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .rule-header {
+            background-color: #e9ecef;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        /* 修改：将 grid 改为 flex column，确保宽度足够 */
+        .rule-body {
+            padding: 15px;
+            display: flex;
+            flex-direction: column; 
+            gap: 15px;
+        }
+
+        .sequence-box {
+            background: #f8f9fa;
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        /* 动作项样式 */
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            padding: 5px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9em;
+            flex-wrap: nowrap; /* 尽量不换行 */
+            overflow-x: auto; /* 极端情况下允许滚动，但不应该发生 */
+        }
+
+        /* 优化输入框宽度 */
+        .action-item select {
+            /* 让选择框稍微紧凑一点 */
+            padding: 4px;
+        }
+        
+        /* 键名选择框，占据剩余空间 */
+        .code-select {
+            flex-grow: 1;
+            min-width: 80px; 
+            max-width: 180px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        input[type="number"] { width: 55px; }
+
+        /* 确保删除按钮不被挤压 */
+        .btn-delete {
+            flex-shrink: 0;
+            margin-left: auto; /* 推到最右边 */
+        }
+
+        /* 回到顶部按钮 */
+        #scroll-top-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: none; /* 默认隐藏 */
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        
+        #scroll-top-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toolbar">
+        <h1>宏配置编辑器</h1>
+        <div style="margin-left: auto; display: flex; gap: 10px;">
+            <button class="btn-primary" onclick="openFile()">📂 打开配置 (Open)</button>
+            <button class="btn-success" onclick="saveFile()">💾 保存配置 (Save)</button>
+            <button class="btn-danger" onclick="resetConfig()">🔄 重置/新建 (New)</button>
+        </div>
+        <div id="file-status" style="width: 100%; font-size: 0.9em; color: #666; margin-top: 5px;">当前未选择文件 (将在内存中创建新配置)</div>
+    </div>
+
+    <div class="container">
+        <!-- Key Column -->
+        <div class="column">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>键盘宏 (Key Macros)</h2>
+                <button class="btn-success btn-sm" onclick="addRule('key')">+ 添加规则</button>
+            </div>
+            <div id="key-list"></div>
+        </div>
+
+        <!-- Mouse Column -->
+        <div class="column">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>鼠标宏 (Mouse Macros)</h2>
+                <button class="btn-success btn-sm" onclick="addRule('mouse')">+ 添加规则</button>
+            </div>
+            <div id="mouse-list"></div>
+        </div>
+    </div>
+
+    <!-- 回到顶部按钮 -->
+    <button id="scroll-top-btn" title="回到顶部" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // --- 1. 数据模型与初始化 ---
+
+        const defaultConfig = {
+            key: [],
+            mouse: []
+        };
+
+        let appConfig = JSON.parse(JSON.stringify(defaultConfig));
+        let fileHandle = null;
+
+        // 常用键码映射
+        const vkMap = {
+            1: "鼠标左键", 2: "鼠标右键", 4: "鼠标中键", 
+            8: "Backspace", 9: "Tab", 13: "Enter", 16: "Shift", 17: "Ctrl", 18: "Alt", 
+            20: "CapsLock", 27: "Esc", 32: "Space",
+            37: "Left", 38: "Up", 39: "Right", 40: "Down",
+            46: "Delete",
+            48: "0", 49: "1", 50: "2", 51: "3", 52: "4", 53: "5", 54: "6", 55: "7", 56: "8", 57: "9",
+            65: "A", 66: "B", 67: "C", 68: "D", 69: "E", 70: "F", 71: "G", 72: "H", 73: "I", 74: "J",
+            75: "K", 76: "L", 77: "M", 78: "N", 79: "O", 80: "P", 81: "Q", 82: "R", 83: "S", 84: "T",
+            85: "U", 86: "V", 87: "W", 88: "X", 89: "Y", 90: "Z",
+            112: "F1", 113: "F2", 114: "F3", 115: "F4", 116: "F5", 117: "F6", 
+            118: "F7", 119: "F8", 120: "F9", 121: "F10", 122: "F11", 123: "F12"
+        };
+
+        // --- 2. 渲染逻辑 (UI Generation) ---
+
+        function render() {
+            renderCategory('key');
+            renderCategory('mouse');
+        }
+
+        function renderCategory(category) {
+            const container = document.getElementById(`${category}-list`);
+            container.innerHTML = '';
+
+            appConfig[category].forEach((rule, ruleIndex) => {
+                const card = document.createElement('div');
+                card.className = 'rule-card';
+
+                // 规则头
+                card.innerHTML = `
+                    <div class="rule-header">
+                        <span>规则 #${ruleIndex + 1}</span>
+                        <button class="btn-danger btn-sm" onclick="deleteRule('${category}', ${ruleIndex})">删除规则</button>
+                    </div>
+                `;
+
+                // 规则体
+                const body = document.createElement('div');
+                body.className = 'rule-body';
+
+                // --- Match 部分 (触发条件) ---
+                const matchBox = document.createElement('div');
+                matchBox.className = 'sequence-box';
+                matchBox.innerHTML = `<h4>当检测到 (Match):</h4>`;
+                
+                rule.match.forEach((item, itemIndex) => {
+                    const row = createActionRow(category, ruleIndex, 'match', itemIndex, item, false);
+                    matchBox.appendChild(row);
+                });
+                
+                const addMatchBtn = document.createElement('button');
+                addMatchBtn.className = 'btn-primary btn-sm';
+                addMatchBtn.innerText = '+ 添加步骤';
+                addMatchBtn.style.marginTop = '10px';
+                addMatchBtn.onclick = () => addSequenceItem(category, ruleIndex, 'match');
+                matchBox.appendChild(addMatchBtn);
+
+                // --- Send 部分 (模拟输出) ---
+                const sendBox = document.createElement('div');
+                sendBox.className = 'sequence-box';
+                sendBox.innerHTML = `<h4>模拟发送 (Send):</h4>`;
+
+                rule.send.forEach((item, itemIndex) => {
+                    // Send 部分需要 isKey 字段
+                    const row = createActionRow(category, ruleIndex, 'send', itemIndex, item, true);
+                    sendBox.appendChild(row);
+                });
+
+                const addSendBtn = document.createElement('button');
+                addSendBtn.className = 'btn-primary btn-sm';
+                addSendBtn.innerText = '+ 添加步骤';
+                addSendBtn.style.marginTop = '10px';
+                addSendBtn.onclick = () => addSequenceItem(category, ruleIndex, 'send');
+                sendBox.appendChild(addSendBtn);
+
+                body.appendChild(matchBox);
+                body.appendChild(sendBox);
+                card.appendChild(body);
+                container.appendChild(card);
+            });
+        }
+
+        // 创建单行操作 UI (Match 或 Send 的一行)
+        function createActionRow(category, ruleIndex, type, itemIndex, data, hasIsKey) {
+            const div = document.createElement('div');
+            div.className = 'action-item';
+
+            // 1. isKey 选择 (仅 Send 有)
+            if (hasIsKey) {
+                const typeSelect = document.createElement('select');
+                typeSelect.style.width = "90px";
+                typeSelect.innerHTML = `
+                    <option value="true" ${data.isKey ? 'selected' : ''}>键盘事件</option>
+                    <option value="false" ${!data.isKey ? 'selected' : ''}>鼠标事件</option>
+                `;
+                typeSelect.onchange = (e) => updateItem(category, ruleIndex, type, itemIndex, 'isKey', e.target.value === 'true');
+                div.appendChild(typeSelect);
+            }
+
+            // 2. 按键码 (Code)
+            // 下拉辅助选框
+            const codeSelect = document.createElement('select');
+            codeSelect.className = 'code-select';
+            codeSelect.innerHTML = `<option value="-1">-- 选择按键 --</option>`;
+            for (const [code, name] of Object.entries(vkMap)) {
+                codeSelect.innerHTML += `<option value="${code}">${name} (${code})</option>`;
+            }
+            codeSelect.innerHTML += `<option value="custom">自定义...</option>`;
+            
+            if (vkMap[data.code]) {
+                codeSelect.value = data.code;
+            } else {
+                codeSelect.value = 'custom';
+            }
+
+            // 数字输入框 (实际值)
+            const codeInput = document.createElement('input');
+            codeInput.type = 'number';
+            codeInput.value = data.code;
+            codeInput.placeholder = 'Code';
+            codeInput.title = 'Windows Virtual-Key Code (Decimal)';
+            
+            // 联动逻辑
+            codeSelect.onchange = (e) => {
+                if (e.target.value !== 'custom' && e.target.value !== '-1') {
+                    const val = parseInt(e.target.value);
+                    codeInput.value = val;
+                    updateItem(category, ruleIndex, type, itemIndex, 'code', val);
+                }
+            };
+            codeInput.onchange = (e) => {
+                const val = parseInt(e.target.value);
+                updateItem(category, ruleIndex, type, itemIndex, 'code', val);
+                if (vkMap[val]) codeSelect.value = val;
+                else codeSelect.value = 'custom';
+            };
+
+            div.appendChild(codeSelect);
+            div.appendChild(codeInput);
+
+            // 3. 动作类型 (按下/抬起) - isUp
+            const actionSelect = document.createElement('select');
+            actionSelect.style.width = "85px";
+            actionSelect.innerHTML = `
+                <option value="false" ${!data.isUp ? 'selected' : ''}>按下</option>
+                <option value="true" ${data.isUp ? 'selected' : ''}>抬起</option>
+            `;
+            actionSelect.onchange = (e) => updateItem(category, ruleIndex, type, itemIndex, 'isUp', e.target.value === 'true');
+            actionSelect.style.color = data.isUp ? '#dc3545' : '#28a745';
+            actionSelect.style.fontWeight = 'bold';
+            
+            div.appendChild(actionSelect);
+
+            // 4. 删除按钮
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn-danger btn-sm btn-delete';
+            delBtn.innerHTML = '&times;';
+            delBtn.title = '删除此步骤';
+            delBtn.onclick = () => deleteSequenceItem(category, ruleIndex, type, itemIndex);
+            div.appendChild(delBtn);
+
+            return div;
+        }
+
+
+        // --- 3. 数据操作逻辑 ---
+
+        function addRule(category) {
+            const newRule = {
+                match: [ { isUp: false, code: 65 } ],
+                send: [ 
+                    { isKey: true, isUp: false, code: 66 }, 
+                    { isKey: true, isUp: true, code: 66 } 
+                ]
+            };
+            appConfig[category].push(newRule);
+            render();
+        }
+
+        function deleteRule(category, index) {
+            if(confirm('确定要删除这条规则吗？')) {
+                appConfig[category].splice(index, 1);
+                render();
+            }
+        }
+
+        function addSequenceItem(category, ruleIndex, type) {
+            const newItem = { isUp: false, code: 0 };
+            if (type === 'send') {
+                newItem.isKey = true;
+            }
+            appConfig[category][ruleIndex][type].push(newItem);
+            render();
+        }
+
+        function deleteSequenceItem(category, ruleIndex, type, itemIndex) {
+            const list = appConfig[category][ruleIndex][type];
+            if (list.length <= 1) {
+                alert('每个序列至少需要一项！');
+                return;
+            }
+            list.splice(itemIndex, 1);
+            render();
+        }
+
+        function updateItem(category, ruleIndex, type, itemIndex, field, value) {
+            appConfig[category][ruleIndex][type][itemIndex][field] = value;
+        }
+
+        function resetConfig() {
+            if(confirm('确定要重置所有配置吗？未保存的内容将丢失。')) {
+                appConfig = JSON.parse(JSON.stringify(defaultConfig));
+                fileHandle = null;
+                document.getElementById('file-status').innerText = '已重置 (新配置)';
+                render();
+            }
+        }
+
+        // --- 4. 文件 API 实现 ---
+
+        async function openFile() {
+            try {
+                const [handle] = await window.showOpenFilePicker({
+                    types: [{
+                        description: 'JSON Configuration',
+                        accept: { 'application/json': ['.json'] }
+                    }],
+                    multiple: false
+                });
+
+                const file = await handle.getFile();
+                const text = await file.text();
+
+                try {
+                    const json = JSON.parse(text);
+                    
+                    // --- 修改 1: 宽松校验 ---
+                    // 只要 key 或 mouse 存在一个即可，不需要两个都存在
+                    if (!json.key && !json.mouse) {
+                        throw new Error("JSON 格式不正确: 至少需要包含 'key' 或 'mouse' 其中一个字段。");
+                    }
+                    
+                    // 初始化不存在的字段为空数组，保证应用不崩溃
+                    appConfig = {
+                        key: Array.isArray(json.key) ? json.key : [],
+                        mouse: Array.isArray(json.mouse) ? json.mouse : []
+                    };
+                    
+                    fileHandle = handle;
+                    document.getElementById('file-status').innerText = `当前文件: ${file.name}`;
+                    render();
+                } catch (e) {
+                    alert('解析 JSON 失败: ' + e.message);
+                }
+
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    console.error(err);
+                    alert('打开文件出错: ' + err.message);
+                }
+            }
+        }
+
+        async function saveFile() {
+            const options = {
+                types: [{
+                    description: 'JSON Configuration',
+                    accept: { 'application/json': ['.json'] }
+                }],
+            };
+
+            if (fileHandle) {
+                options.suggestedName = fileHandle.name;
+            } else {
+                options.suggestedName = "config.json";
+            }
+
+            try {
+                const handle = await window.showSaveFilePicker(options);
+                const writable = await handle.createWritable();
+                const content = JSON.stringify(appConfig, null, 4);
+                await writable.write(content);
+                await writable.close();
+
+                fileHandle = handle;
+                document.getElementById('file-status').innerText = `已保存至: ${handle.name}`;
+                alert('保存成功！');
+
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    console.error(err);
+                    alert('保存文件出错: ' + err.message);
+                }
+            }
+        }
+
+        // --- 5. 回到顶部逻辑 (修改 3) ---
+        const scrollBtn = document.getElementById("scroll-top-btn");
+
+        window.onscroll = function() {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollBtn.style.display = "flex";
+            } else {
+                scrollBtn.style.display = "none";
+            }
+        };
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+
+        // --- 初始化运行 ---
+        render();
+
+    </script>
+</body>
+</html>
